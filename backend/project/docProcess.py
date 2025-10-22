@@ -43,17 +43,6 @@ def get_embeddings_function(model_name):
     return OllamaEmbeddings(model=model_name)
 
 
-def create_embedding(chunks, modelname: str):
-    """
-    Create embeddings for chunks using Ollama model.
-    """
-    if DEBUG:
-        print(f"[DOC] Creating embeddings using model: {modelname}")
-
-    embedding_model = get_embeddings_function(modelname)
-    return embedding_model.embed_documents(chunks)
-
-
 def add_docs(client, chunks):
     """
     Add document chunks to Chroma DB and sync them to Neo4j.

@@ -3,20 +3,7 @@ from langchain_ollama import ChatOllama, OllamaEmbeddings
 from langchain_core.prompts import PromptTemplate
 from langchain_chroma.vectorstores import Chroma
 from GlobalVars import *
-from graphProcess import get_related_context   # ✅ NEW IMPORT
-
-def get_embeddings_function(model_name):
-    return OllamaEmbeddings(model=model_name)
-
-def getchatModel(model_name):
-    return ChatOllama(model=model_name)
-
-def getChroma(collection_name, model_name, DB_PATH="chromaDB"):
-    return Chroma(
-        collection_name=collection_name,
-        embedding_function=get_embeddings_function(model_name),
-        persist_directory=DB_PATH
-    )
+from graphProcess import get_related_context   
 
 def chatapplicationApi(query: str, collectionName: str, modelName: str, dbpath: str):
     """
@@ -47,7 +34,7 @@ def chatapplicationApi(query: str, collectionName: str, modelName: str, dbpath: 
     chatModel = ChatOllama(model=modelName)
     db = Chroma(
         collection_name=collectionName,
-        embedding_function=get_embeddings_function(modelName),
+        embedding_function=OllamaEmbeddings(model=modelName),
         persist_directory=dbpath
     )
 

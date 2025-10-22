@@ -11,15 +11,13 @@ from GlobalVars import FILE_DIR, DB_DIR, MODEL
 
 
 app = FastAPI()
-# Global Neo4j connection (singleton)
-
 
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],  # Replace "*" with the specific origin(s) of your frontend for better security
+    allow_origins=["*"],  
     allow_credentials=True,
-    allow_methods=["*"],  # Allow all HTTP methods
-    allow_headers=["*"],  # Allow all HTTP headers
+    allow_methods=["*"],   
+    allow_headers=["*"],  
 )
 if not os.path.exists(FILE_DIR):
     os.mkdir(FILE_DIR)
@@ -29,18 +27,16 @@ if not os.path.exists(DB_DIR):
 @app.post("/uploadpdf/")
 async def upload_pdf(file: UploadFile = File(...)):
 
-    # Check if the uploaded file is a PDF
+    #uploading pdf file
     if file.content_type != "application/pdf":
         raise HTTPException(status_code=400, detail="Only PDF files are allowed")
 
     # Read the file's contents
     contents = await file.read()
-
-    # Optionally save the PDF to disk
+ 
     
     save_path = os.path.join(FILE_DIR,file.filename)
-    print('filename :',save_path)
-    # save_path = f"uploaded_{file.filename}"
+    print('filename :',save_path) 
     with open(save_path, "wb") as f:
         f.write(contents)
     file_path = os.path.join(FILE_DIR ,file.filename)
@@ -73,9 +69,9 @@ def deletedata():
     if os.path.exists(FILE_DIR):
         for item in os.listdir(FILE_DIR):
             item_path = os.path.join(FILE_DIR, item)
-            if os.path.isfile(item_path) or os.path.islink(item_path):  # Check for files and symbolic links
+            if os.path.isfile(item_path) or os.path.islink(item_path):   
                 os.remove(item_path)
-            elif os.path.isdir(item_path):  # Check for subdirectories
+            elif os.path.isdir(item_path):  
                 shutil.rmtree(item_path)
     else:
         return {"error":f"something went wrong while deleting in {FILE_DIR}"}
@@ -83,13 +79,13 @@ def deletedata():
     if os.path.exists(DB_DIR):
         for item in os.listdir(DB_DIR):
             item_path = os.path.join(DB_DIR, item)
-            if os.path.isfile(item_path) or os.path.islink(item_path):  # Check for files and symbolic links
+            if os.path.isfile(item_path) or os.path.islink(item_path):  
                 os.remove(item_path)
-            elif os.path.isdir(item_path):  # Check for subdirectories
-                shutil.rmtree(item_path)
-        # print(f"Cleared all contents from: {DB_DIR}")
+            elif os.path.isdir(item_path):  
+                shutil.rmtree(item_path) 
     else:
         return {"error":f"something went wrong while deleting in {DB_DIR}"}
     
 
     return {"status":"deleted successfully all the files and directories"}
+
