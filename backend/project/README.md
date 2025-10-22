@@ -1,4 +1,5 @@
 install ollama
+make neo4j account
 clone the repo
 to run the project cd to the project directory
 python -m venv venv
