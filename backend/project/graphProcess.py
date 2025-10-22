@@ -132,4 +132,3 @@ def insert_docs_to_graph(graph, docs, embedding_model=MODEL):
     if DEBUG:
         print("[GRAPH] Document insertion complete.")
 
-
