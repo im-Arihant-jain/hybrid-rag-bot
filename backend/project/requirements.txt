@@ -1,0 +1,27 @@
+# --- Core LangChain ecosystem ---
+langchain
+langchain-core
+langchain-community
+langchain-ollama
+langchain-chroma
+langserve
+langgraph
+langsmith
+
+# --- RAG Vector & Graph Components ---
+chromadb
+neo4j
+langchain-neo4j
+
+# --- Document loading & processing ---
+pypdf
+tavily-python
+
+# --- Web Framework & Serving ---
+fastapi[standard]
+streamlit
+
+# --- Development & Testing ---
+pytest
+IPython
+ipykernel
