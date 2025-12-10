@@ -1,0 +1,4 @@
+prediction	ground_truth	exact_match	bleu	rougeL
+The capital of France is Paris.	The capital of France is Paris.	1.0	1.0	1.0
+5 + 7 = 12	5 + 7 = 12	1.0	1.0	1.0
+OVERALL_AVERAGE	OVERALL_AVERAGE	1.0	1.0	1.0

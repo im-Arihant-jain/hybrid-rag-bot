@@ -25,3 +25,10 @@ streamlit
 pytest
 IPython
 ipykernel
+
+
+# Metrics & Monitoring
+ mlflow 
+ dagshub 
+ rouge-score 
+ nltk
