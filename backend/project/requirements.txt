@@ -1,4 +1,4 @@
-# --- Core LangChain ecosystem ---
+# --- Core LangChain Ecosystem ---
 langchain
 langchain-core
 langchain-community
@@ -8,17 +8,23 @@ langserve
 langgraph
 langsmith
 
-# --- RAG Vector & Graph Components ---
+# --- Vector & Graph RAG Components ---
 chromadb
 neo4j
 langchain-neo4j
 
-# --- Document loading & processing ---
+# --- Document Loading & Processing ---
 pypdf
 tavily-python
 
-# --- Web Framework & Serving ---
+# --- Web Framework & Server ---
 fastapi[standard]
+uvicorn
+python-multipart
+pydantic
+pydantic-settings
+
+# --- Frontend / UI ---
 streamlit
 
 # --- Development & Testing ---
@@ -26,9 +32,19 @@ pytest
 IPython
 ipykernel
 
+# --- Metrics & Monitoring ---
+mlflow
+dagshub
+rouge-score
+nltk
+sacrebleu
+sentence-transformers
+bert-score
 
-# Metrics & Monitoring
- mlflow 
- dagshub 
- rouge-score 
- nltk
+# --- Utilities ---
+numpy
+pandas
+scikit-learn
+
+# --- CORS (for React ↔ FastAPI) ---
+fastapi-cors

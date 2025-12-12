@@ -4,7 +4,16 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 import images from "./assets/images.png";
-const RightPanel = ({ imageurl }) => {
+
+import { useRouter } from "next/navigation";
+
+const RightPanel = ({ messages }) => {
+   const router = useRouter();
+
+  const handleEvaluate = () => {
+    const encoded = encodeURIComponent(JSON.stringify(messages));
+    router.push(`/evaluation?data=${encoded}`);
+  };
   return (
     <div style={{
       overflow: 'auto',
@@ -13,14 +22,16 @@ const RightPanel = ({ imageurl }) => {
     }} className="flex flex-col items-center p-4 w-full h-full rounded-lg shadow-md ">
       {/* <div className="flex flex-col w-full md:w-1/4"> */}
       <ProductCard
-        title="Designed with ❤ by Aditya patel and Arihant Jain"
+        title="Designed with ❤ by Arihant Jain"
         description="Upload the pdf and ask anything about it ..."
         image={images}  // Replace with the actual image path
         price="₹2000"
       />
       <br/>
       <br/>
-      <h1 className="text-lg font-bold text-gray-800 mb-2">{imageurl}</h1>
+      <button
+       onClick={handleEvaluate}
+      className="text-lg font-bold text-white-800 mb-2">EVALUATE</button>
 
       {/* </div> */}
     </div>

@@ -9,7 +9,10 @@ import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CONFIG from './config';
 const MainContainer = () => {
-  const [messages, setMessages] = useState([]);
+  const [messages, setMessages] = useState([
+  { input: "Hello", output: "Hi there!" },
+  { input: "Summarize page 2", output: "" } // last message has empty output (loading)
+]);
   const [inputmssg, setInputMssg] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [filename, setFilename] = useState('');
@@ -134,7 +137,8 @@ const handleSendtext = async () => {
         )}
       </div>
       <div className="flex flex-col w-full md:w-1/4">
-        <RightPanel imageurl={''} />
+        <RightPanel messages={messages} />
+
       </div>
     </div>
   );
