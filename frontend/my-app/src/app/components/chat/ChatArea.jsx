@@ -23,19 +23,19 @@ const ChatArea = ({ messages }) => {
         <div key={index} className="flex p-1.5 rounded-lg mb-2">
           <div>
             {/* Display input message */}
-            <div className="inline-block p-1.5 rounded-lg mb-2 bg-[#5DE0E6] self-end">
+            <div className="text-black inline-block p-1.5 rounded-lg mb-2 bg-gray-300 self-end">
               {msg.input}
             </div>
             <br>
             </br>
             {/* Show loader if output is not present */}
             {msg.output === '' ? (
-              <div className="inline-block p-1.5 rounded-lg mb-2 bg-gray-300 self-start animate-pulse">
+              <div className="inline-block p-1.5 rounded-lg mb-2 bg-gray-800 self-start animate-pulse">
                 Loading...
               </div>
             ) : (
               // Display output message when available
-              <div className="inline-block p-1.5 rounded-lg mb-2 bg-[#004AAD] text-white self-start">
+              <div className="inline-block p-1.5 rounded-lg mb-2 bg-gray-800 text-white self-start">
                 {msg.output}
               </div>
             )}

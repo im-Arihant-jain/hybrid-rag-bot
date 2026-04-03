@@ -5,7 +5,5 @@ to run the project cd to the project directory<br>
 python -m venv venv<br>
 source venv/Scripts/activate<br>
 pip install -r requirements.txt<br>
-uvicorn main:app --reload<br>
+uvicorn main:app --reload<br>        
 http://127.0.0.1:8000/docs <br>
-
-

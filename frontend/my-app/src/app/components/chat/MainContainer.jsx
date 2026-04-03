@@ -2,22 +2,21 @@
 
 import React, { useState } from 'react';
 import ChatArea from './ChatArea';
-import RightPanel from './RightPanel';
+import RightPanel from './RightPanel';4
+import Eval from '../../evaluation/Eval';
 import { FaArrowCircleUp } from "react-icons/fa";
 import axios from 'axios';
 import { ToastContainer, toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import CONFIG from './config';
 const MainContainer = () => {
-  const [messages, setMessages] = useState([
-  { input: "Hello", output: "Hi there!" },
-  { input: "Summarize page 2", output: "" } // last message has empty output (loading)
-]);
+  const [messages, setMessages] = useState([{input: "Hello, how can I help you?", output: "Hi! I'm here to assist you with any questions you have."}]);
   const [inputmssg, setInputMssg] = useState('');
   const [selectedFile, setSelectedFile] = useState(null);
   const [filename, setFilename] = useState('');
   const [successupload, setSuccessupload] = useState('');
-  const [loading, setLoading] = useState(false); // State for loader
+  const [loading, setLoading] = useState(false); 
+  const [evalpage, setEvalpage] = useState(false);
 const handleSendtext = async () => {
     if (!inputmssg) {
       toast.error("Please enter a message first!");
@@ -44,7 +43,7 @@ const handleSendtext = async () => {
         )
       );
 
-      setInputMssg(''); // Clear the input field
+      setInputMssg(''); 
     } catch (error) {
       console.error('Error sending message:', error);
       toast.error('Error sending message. Please try again.');
@@ -92,6 +91,10 @@ const handleSendtext = async () => {
   };
 
   return (
+    <>
+    {evalpage ? 
+      <Eval messages={messages}/>
+        :
     <div className="flex flex-col md:flex-row w-full min-h-screen">
       <ToastContainer position="top-right" autoClose={3000} />
 
@@ -137,10 +140,12 @@ const handleSendtext = async () => {
         )}
       </div>
       <div className="flex flex-col w-full md:w-1/4">
-        <RightPanel messages={messages} />
+        <RightPanel evalstatefunc = {setEvalpage} messages={messages} />
 
       </div>
     </div>
+}
+    </>
   );
 };
 

@@ -4,16 +4,10 @@
 import React from 'react';
 import ProductCard from './ProductCard';
 import images from "./assets/images.png";
+ 
 
-import { useRouter } from "next/navigation";
-
-const RightPanel = ({ messages }) => {
-   const router = useRouter();
-
-  const handleEvaluate = () => {
-    const encoded = encodeURIComponent(JSON.stringify(messages));
-    router.push(`/evaluation?data=${encoded}`);
-  };
+const RightPanel = ({ evalstatefunc, messages }) => {
+    
   return (
     <div style={{
       overflow: 'auto',
@@ -30,8 +24,8 @@ const RightPanel = ({ messages }) => {
       <br/>
       <br/>
       <button
-       onClick={handleEvaluate}
-      className="text-lg font-bold text-white-800 mb-2">EVALUATE</button>
+      onClick={() => evalstatefunc(true)}
+      className="border p-2 border-white rounded-md hover:bg-gray-300 text-lg font-bold text-white-800 mb-2">EVALUATE</button>
 
       {/* </div> */}
     </div>

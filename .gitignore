@@ -1,0 +1,9 @@
+__pycache__/
+*.py[cod]
+
+chromaDB/
+chromadb/
+data/
+venv/
+mlruns/
+node_modules/

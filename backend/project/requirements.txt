@@ -16,6 +16,7 @@ langchain-neo4j
 # --- Document Loading & Processing ---
 pypdf
 tavily-python
+spacy
 
 # --- Web Framework & Server ---
 fastapi[standard]

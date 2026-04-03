@@ -1,40 +1,89 @@
-from langchain_ollama.embeddings import OllamaEmbeddings
-from langchain_community.document_loaders import PyPDFLoader
-from langchain_text_splitters import RecursiveCharacterTextSplitter
+import os
+import shutil
+from typing import Dict
+
 from langchain_chroma.vectorstores import Chroma
+from langchain_community.document_loaders import PyPDFLoader
+from langchain_ollama.embeddings import OllamaEmbeddings
+from langchain_text_splitters import RecursiveCharacterTextSplitter
+
 from GlobalVars import *
 from graphProcess import get_graph, insert_docs_to_graph
 
-import os       
-import shutil    
-
 
 def load_document(file_path):
-    """
-    Load a PDF file as LangChain documents.
-    """
     if DEBUG:
         print(f"[DOC] Loading document from: {file_path}")
-
     document_loader = PyPDFLoader(file_path)
     return document_loader.load()
 
 
-def split_document(document):
-    """
-    Split document into overlapping chunks.
-    """
+def infer_document_profile(document) -> Dict[str, object]:
+    page_count = len(document)
+    lengths = [len(getattr(d, "page_content", "")) for d in document] if document else [0]
+    total_chars = sum(lengths)
+    avg_chars = total_chars / max(1, page_count)
+
+    if total_chars <= 5000:
+        profile = "short"
+    elif page_count >= 25 or avg_chars >= 3500:
+        profile = "dense"
+    else:
+        profile = "standard"
+
+    return {
+        "profile": profile,
+        "page_count": page_count,
+        "total_chars": total_chars,
+        "avg_chars_per_page": round(avg_chars, 2),
+    }
+
+
+def get_chunk_params(profile: str) -> Dict[str, int]:
+    if profile == "short":
+        return {"chunk_size": 1400, "chunk_overlap": 180}
+    if profile == "dense":
+        return {"chunk_size": 800, "chunk_overlap": 200}
+    return {"chunk_size": 1024, "chunk_overlap": 220}
+
+
+def split_document(document, chunk_strategy: str = "adaptive", chunk_size: int = None, chunk_overlap: int = None):
     if DEBUG:
-        print(f"[DOC] Splitting document into chunks...")
+        print("[DOC] Splitting document into chunks...")
+
+    profile_info = infer_document_profile(document)
+    selected_profile = profile_info["profile"]
+
+    if chunk_strategy == "adaptive" and (chunk_size is None or chunk_overlap is None):
+        params = get_chunk_params(selected_profile)
+        chunk_size = params["chunk_size"]
+        chunk_overlap = params["chunk_overlap"]
+    else:
+        chunk_size = chunk_size or 1024
+        chunk_overlap = chunk_overlap or 220
 
     splitter = RecursiveCharacterTextSplitter(
-        chunk_size=1024,
-        chunk_overlap=256,
+        chunk_size=chunk_size,
+        chunk_overlap=chunk_overlap,
     )
     chunks = splitter.split_documents(document)
 
+    for idx, chunk in enumerate(chunks):
+        metadata = getattr(chunk, "metadata", {}) or {}
+        metadata.update(
+            {
+                "chunk_index": idx,
+                "chunk_size": chunk_size,
+                "chunk_overlap": chunk_overlap,
+                "chunk_profile": selected_profile,
+            }
+        )
+        chunk.metadata = metadata
+
     if DEBUG:
-        print(f"[DOC] Total chunks created: {len(chunks)}")
+        print(
+            f"[DOC] Profile={selected_profile} | chunk_size={chunk_size} | chunk_overlap={chunk_overlap} | chunks={len(chunks)}"
+        )
 
     return chunks
 
@@ -44,13 +93,12 @@ def get_embeddings_function(model_name):
 
 
 def add_docs(client, chunks):
-    """
-    Add document chunks to Chroma DB and sync them to Neo4j.
-    """
     if DEBUG:
         print(f"[DOC] Adding {len(chunks)} chunks to Chroma DB...")
 
-    client.add_documents(chunks)
+    texts = [getattr(c, "page_content", str(c)) for c in chunks]
+    metadatas = [getattr(c, "metadata", {}) or {} for c in chunks]
+    client.add_texts(texts=texts, metadatas=metadatas)
 
     if DEBUG:
         print("[DOC] Syncing documents to Neo4j...")
@@ -64,28 +112,20 @@ def add_docs(client, chunks):
 
 
 def getclient(collection_name, model_name, directory):
-    """
-    Get or create a Chroma collection client.
-    """
     if DEBUG:
         print(f"[DOC] Getting Chroma client for: {collection_name}")
-
     return Chroma(
         collection_name=collection_name,
         embedding_function=get_embeddings_function(model_name),
-        persist_directory=directory
+        persist_directory=directory,
     )
 
 
 def erase(FILE_DIR, DB_DIR):
-    """
-    Clears all files and directories inside FILE_DIR and DB_DIR.
-    """
     if DEBUG:
         print(f"[DOC] Clearing FILE_DIR: {FILE_DIR}")
         print(f"[DOC] Clearing DB_DIR: {DB_DIR}")
 
-    # --- Clear uploaded files ---
     if os.path.exists(FILE_DIR):
         for item in os.listdir(FILE_DIR):
             item_path = os.path.join(FILE_DIR, item)
@@ -96,7 +136,6 @@ def erase(FILE_DIR, DB_DIR):
     else:
         return {"error": f"Something went wrong while deleting in {FILE_DIR}"}
 
-    # --- Clear Chroma DB ---
     if os.path.exists(DB_DIR):
         for item in os.listdir(DB_DIR):
             item_path = os.path.join(DB_DIR, item)
